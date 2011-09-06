@@ -31,11 +31,12 @@
 #include "ks0108.h"
 // include fonts
 #include "font5x7.h"
+#include "font7x7.h"
 #include "fontgr.h"
 
 #include "util.h"
 
-
+extern volatile uint8_t write_font = 57;
 
 
 // graphic routines
@@ -267,13 +268,27 @@ void glcdCircle(u08 xcenter, u08 ycenter, u08 radius, u08 color)
 void glcdWriteChar(unsigned char c, uint8_t inverted)
 {
 	u08 i = 0;
+        u08 pix_width = 5;
 
-	for(i=0; i<5; i++)
+        if (write_font == 77){
+          pix_width = 7;
+        }
+
+
+	for(i = 0; i < pix_width; i++)
 	{
 	  if (inverted) {
-	    glcdDataWrite(~ pgm_read_byte(&Font5x7[((c - 0x20) * 5) + i]));
+            if (write_font == 57){
+              glcdDataWrite(~ pgm_read_byte(&Font5x7[((c - 0x20) * 5) + i]));
+            }else if (write_font == 77){
+              glcdDataWrite(~ pgm_read_byte(&Font7x7[((c - 0x20) * 7) + i]));
+            }
 	  } else {
-	    glcdDataWrite(pgm_read_byte(&Font5x7[((c - 0x20) * 5) + i]));
+            if (write_font == 57){
+	      glcdDataWrite(pgm_read_byte(&Font5x7[((c - 0x20) * 5) + i]));
+            }else if (write_font == 77){
+              glcdDataWrite(pgm_read_byte(&Font7x7[((c - 0x20) * 7) + i]));
+            }
 	  }
 	}
 
